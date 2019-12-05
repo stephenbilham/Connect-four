@@ -1,5 +1,8 @@
 import React, { useState } from 'react';
 import Square from "./Square.js";
+import wc from "./WinningConditions.js"
+import winningConditions from './WinningConditions.js';
+import { red } from 'ansi-colors';
 
 let squares = Array(42).fill(0);
 let player1 = [];
@@ -7,6 +10,11 @@ let player2 = [];
 let winningPlayer = 0;
 let player1Turn = true;
 let gameOver = false;
+let hoverColumn = -1
+let animationRunning = false
+let baseSpeed = 1.25;
+
+
 
 class Board extends React.Component {
     constructor (props) {
@@ -15,6 +23,13 @@ class Board extends React.Component {
             updated: false
         }
     }
+
+    finalTop = {
+        "--finalTop": "500%"
+      };
+    dropTime = {
+        "--dropTime": "1.5s"
+      };
 
 
         // IF square id/value? is !0 return (so players cannot click on the piece again) 
@@ -26,7 +41,16 @@ class Board extends React.Component {
         
 
         // reset grid to default value whenever 
-        //  grid = Array.(42).fill
+        resetButton = () => {
+             squares = Array(42).fill(0);
+             player1 = [];
+             player2 = [];
+             winningPlayer = 0;
+             player1Turn = true;
+             gameOver = false;
+             this.setState({updated: !this.state.updated})
+        }
+
         //  player1 = []
         // player2 = []
 
@@ -53,20 +77,51 @@ class Board extends React.Component {
                 break;
             }
         }
-
-        
-        console.log(index, column)
+        // console.log(index, column)
         squares[targetSquare] =  player1Turn ? 1 : 2
+        if (player1Turn) {
+            player1.push(targetSquare)
+        }
+        else {
+            player2.push(targetSquare)
+        }
         player1Turn = !player1Turn
-
-
+        if(this.checkIfWinner(1)){
+            gameOver = true 
+            winningPlayer = 1
+            alert("Player 1 wins")
+        } else if(this.checkIfWinner(2)){
+            gameOver = true
+            winningPlayer = 2
+            alert("Player 2 wins")
+        }
         this.setState({updated: !this.state.updated})
     }
-
-
+    //playerID is 1 for player1 and 2 for player2
+    
+   
+    checkIfWinner = (playerID) => { 
+        let playerArr = playerID === 1 ? player1 : player2
+        let winningConditions = wc.getAllWinConditions()
+        let playerWins = false
+        for (let i = 0;i < winningConditions.length; i++) {
+            let curWinningConditions = winningConditions[i]
+            playerWins = true
+            for(let j = 0; j < curWinningConditions.length; j++) {
+                if (!playerArr.includes(curWinningConditions[j])){
+                    playerWins = false
+                    break;
+                }
+            }
+            if(playerWins){
+                break;
+            }
+        }
+        return playerWins
+    }
+    
+ 
     render(){
-
-        //create a lines for the SQUARES of the grid ex 1px solid, black
 
         let grid = squares.map((element, i) => {
              return (
@@ -76,9 +131,13 @@ class Board extends React.Component {
         
       return (
         <div>
+            <h1 className="game-header">Connect Four!</h1>
             <div  className = "grid">
                 {grid}
             </div>   
+            <div>
+                <button className="button" onClick={this.resetButton}>Reset Game</button>
+            </div>
         </div>
        
       );
@@ -88,4 +147,5 @@ class Board extends React.Component {
   
 
 export default Board;
+
 

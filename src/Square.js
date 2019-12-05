@@ -19,8 +19,7 @@ class Square extends React.Component {
    
   return (
       <div className = "square" onClick={this.handleClick}>
-        <p>{this.props.value}</p>
-        {/* <img className = "face" src = {blank} alt = {blank}></img> */}
+        <img className = "pieceSize" className = "face" src = {this.props.value === 0 ? blank : this.props.value === 1 ? red : blue} alt = {blank} ></img>
       </div>
   );
  }
@@ -29,31 +28,3 @@ class Square extends React.Component {
 export default Square;
 
 
-
-
-
-
-
-
-
-
-// const Square = (props) => {
-
-//   const handleClick = () => {
-//     const {id, handleClick} = props
-//     let modId = id + 7;
-//     let column = 0;
-//     for(let i = 0; i < 7; i++){
-//       column = i;
-//       if((modId-i)%7 == 0){
-//         break;
-//       }
-//     }
-//     return handleClick();
-//   }
-//   return (
-//       <div className = "square" onClick={handleClick}>
-//         <img className = "face" src = {props.value==2 ? blue : props.value ==1 ? red : blank } alt = {blank}></img>
-//       </div>
-//   );
-// }
